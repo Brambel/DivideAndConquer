@@ -90,11 +90,18 @@ public class ConvexHull {
 		//we will push our initial 4 points to the hull counter clockwise
 		hull.add(Q1vert);	//top point
 		hullQ1(Q1vert);
-		hull.add(xMin);		//left point
+		if(!Q1vert.equals(xMin)){
+			hull.add(xMin);		//left point
+		}
+		
 		hullQ3(Q3vert);
-		hull.add(Q4vert); 	//bottom point
+		if(!xMin.equals(Q4vert)){
+			hull.add(Q4vert); 	//bottom point
+		}
 		hullQ4(Q4vert);
-		hull.add(xMax); 	//right point
+		if(!Q4vert.equals(xMax)){
+			hull.add(xMax); 	//right point
+		}
 		hullQ2(Q2vert);
 		hull.add(hull.get(0)); //close the hull
 		
@@ -102,6 +109,8 @@ public class ConvexHull {
 	}
 	private void hullQ1(Point2D vert){
 		Point2D localMax = xMin;  //lowest y point
+		List<Point2D> candidates = new ArrayList<Point2D>();
+		candidates.add(vert);  //vert is first on list for compare at end
 		
 		while(! vert.equals(xMin)){//see if we have made it back to x
 			
@@ -118,21 +127,32 @@ public class ConvexHull {
 					}
 				}
 			}
-			Line2D testLine = new Line2D.Float(vert,xMin); //line from vert to xMax to see if our local is inside or outside the hull
-			if(testLine.relativeCCW(localMax)==1){
-				//tallest point is above line from vert to xMin
+			if(localMax.equals(vert)){//if we havn't found a new point were done
+				//tallest point is below line from vert to xMin
+				vert = xMin;
+				candidates.add(vert);
+			}else{
+				//wise add to list of possible vertexes
 				vert = localMax;
+				candidates.add(vert);
+			}
+		}
+		vert=candidates.remove(0);//pop original vert off list
+		while(!candidates.isEmpty()){
+			Line2D testLine = new Line2D.Float(vert,xMin); //line from current vert to xMax to see if our local is inside or outside the hull
+			if(testLine.relativeCCW(candidates.get(0))== 1){
+				vert=candidates.remove(0); //it belongs in the list and will be next vert to test against
 				hull.add(vert);
 			}else{
-				//tallest point is below line from vert to xMin, were done
-				vert = xMin;
+				candidates.remove(0);//it's inside the optimum hull and dosn't belong on the list
 			}
 		}
 	}
 	
 	private void hullQ3(Point2D vert){
 		Point2D localMax = xMin;  //lowest y point
-		Stack<Point2D> points = new Stack<Point2D>();//need to reverse order at end
+		List<Point2D> candidates = new ArrayList<Point2D>();
+		candidates.add(vert);  //vert is first on list for compare at end
 		
 		while(! vert.equals(xMin)){//see if we have made it back to x
 			
@@ -149,25 +169,37 @@ public class ConvexHull {
 					}
 				}
 			}
-			Line2D testLine = new Line2D.Float(vert,xMin); //line from vert to xMax to see if our local is inside or outside the hull
-			if(testLine.relativeCCW(localMax)==-1){
+			if(localMax.equals(vert)){//if we havn't found a new point were done
 				//tallest point is below line from vert to xMin
-				vert = localMax;
-				points.push(vert);
-			}else{
-				//tallest point is below line from vert to xMin, were done
 				vert = xMin;
-				while(!points.isEmpty()){ //reverse order of all points to hull
-					hull.add(points.pop());
-				}
+				candidates.add(vert);
+			}else{
+				//wise add to list of possible vertexes
+				vert = localMax;
+				candidates.add(vert);
 			}
+		}
+		
+		Stack<Point2D> temp = new Stack<Point2D>();//need to reverse order
+		vert=candidates.remove(0);//pop original vert off list
+		while(!candidates.isEmpty()){
+			Line2D testLine = new Line2D.Float(vert,xMin); //line from current vert to xMax to see if our local is inside or outside the hull
+			if(testLine.relativeCCW(candidates.get(0))== -1){
+				vert=candidates.remove(0); //it belongs in the list and will be next vert to test against
+				temp.push(vert);
+			}else{
+				candidates.remove(0);//it's inside the optimum hull and dosn't belong on the list
+			}
+		}
+		while(!temp.isEmpty()){
+			hull.add(temp.pop());
 		}
 	}
 	
 	private void hullQ4(Point2D vert){
 		Point2D localMax = xMax;  //lowest y point
-		
-		
+		List<Point2D> candidates = new ArrayList<Point2D>();
+		candidates.add(vert);  //vert is first on list for compare at end
 		while(! vert.equals(xMax)){//see if we have made it back to x
 			
 			double distance = 0;  //find greatest distance
@@ -183,21 +215,34 @@ public class ConvexHull {
 					}
 				}
 			}
-			Line2D testLine = new Line2D.Float(vert,xMax); //line from vert to xMax to see if our local is inside or outside the hull
-			if(testLine.relativeCCW(localMax)==1){
+
+			if(localMax.equals(vert)){//if we havn't found a new point were done
 				//tallest point is below line from vert to xMin
-				vert = localMax;
-				hull.add(vert);
-			}else{
-				//tallest point is below line from vert to xMin, were done
 				vert = xMax;
+				candidates.add(vert);
+			}else{
+				//wise add to list of possible vertexes
+				vert = localMax;
+				candidates.add(vert);
 			}
 		}
+		vert=candidates.remove(0);//pop original vert off list
+		while(!candidates.isEmpty()){
+			Line2D testLine = new Line2D.Float(vert,xMax); //line from current vert to xMax to see if our local is inside or outside the hull
+			if(testLine.relativeCCW(candidates.get(0))== 1){
+				vert=candidates.remove(0); //it belongs in the list and will be next vert to test against
+				hull.add(vert);
+			}else{
+				candidates.remove(0);//it's inside the optimum hull and dosn't belong on the list
+			}
+		}
+		
 	}
 	
 	private void hullQ2(Point2D vert){
 		Point2D localMax = xMax;  //lowest y point
-		Stack<Point2D> points = new Stack<Point2D>();//need to reverse order at end
+		List<Point2D> candidates = new ArrayList<Point2D>();
+		candidates.add(vert);  //vert is first on list for compare at end
 		
 		while(! vert.equals(xMax)){//see if we have made it back to x
 			
@@ -214,18 +259,40 @@ public class ConvexHull {
 					}
 				}
 			}
-			Line2D testLine = new Line2D.Float(vert,xMax); //line from vert to xMax to see if our local is inside or outside the hull
-			if(testLine.relativeCCW(localMax)==-1){
+
+			if(localMax.equals(vert)){//if we havn't found a new point were done
 				//tallest point is below line from vert to xMin
-				vert = localMax;
-				points.push(vert);
-			}else{
-				//tallest point is below line from vert to xMin, were done
 				vert = xMax;
-				while(!points.isEmpty()){ //reverse order of all points to hull
-					hull.add(points.pop());
-				}
+				candidates.add(vert);
+			}else{
+				//wise add to list of possible vertexes
+				vert = localMax;
+				candidates.add(vert);
 			}
+		}
+		
+		Stack<Point2D> temp = new Stack<Point2D>();//need to reverse order
+		vert=candidates.remove(0);//pop original vert off list
+		while(!candidates.isEmpty()){
+			Line2D testLine = new Line2D.Float(vert,xMax); //line from current vert to xMax to see if our local is inside or outside the hull
+			if(testLine.relativeCCW(candidates.get(0))== -1){
+				vert=candidates.remove(0); //it belongs in the list and will be next vert to test against
+				temp.push(vert);
+			}else{
+				candidates.remove(0);//it's inside the optimum hull and dosn't belong on the list
+			}
+		}
+		while(!temp.isEmpty()){
+			hull.add(temp.pop());
+		}
+		
+	}
+	
+	public void print(){
+		int i=0;
+		System.out.println("The points on the hull are:");
+		for(Point2D p : hull){
+			System.out.println(++i+")\t("+(int)p.getX()+","+(int)p.getY()+")"); 
 		}
 	}
 }
