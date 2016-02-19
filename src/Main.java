@@ -11,7 +11,7 @@ public class Main {
 		ConvexHull hull = new ConvexHull();
 		Random r = new Random();
 		
-		int n = 10;
+		int n = 10000;
 		for(int i=0;i<n;++i){
 			hull.addPoint(r.nextInt(n), r.nextInt(n));
 		}
@@ -21,16 +21,10 @@ public class Main {
 		for(Point2D p : h){
 			convexHull.addPoint((int)p.getX(), (int)p.getY());
 		}
-		
-		System.out.println(points.toString());
 		hull.print();
-		/**
-		for(Point2D p :hull.getPoints()){
-			if(!convexHull.contains(p)){
-				System.out.println(p.toString()+" is not in the hull");
-			}
-		}
-		**/
+		
+		
+		
 		
 	}
 
