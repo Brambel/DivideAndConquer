@@ -11,7 +11,7 @@ public class Main {
 		ConvexHull hull = new ConvexHull();
 		Random r = new Random();
 		
-		int n = 100000;
+		int n = 1;
 		for(int i=0;i<n;++i){
 			hull.addPoint(r.nextInt(n), r.nextInt(n));
 		}
@@ -23,7 +23,8 @@ public class Main {
 		}
 		hull.print();
 		
-		
+		Tromino trom = new Tromino(2, new Point2D.Float(0,1));
+		trom.print();
 		
 		
 	}
