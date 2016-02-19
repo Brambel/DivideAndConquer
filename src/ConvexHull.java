@@ -44,7 +44,7 @@ public class ConvexHull {
 		Point2D Q4vert = population.get(0);
 		
 		
-		//find our x's
+		//find our x's and initial verts
 		for(Point2D p : population){
 			if(xMax.getX()<p.getX()){
 				xMax = p;
@@ -80,17 +80,18 @@ public class ConvexHull {
 				}
 			}
 		}
-		//last thing is to add xMin / xMax to their point pools
+		//last thing is to add xMin / xMax to the point pools that will use them as endpoints of hull sections
 		aboveLeft.add(xMin);
 		belowLeft.add(xMin);
 		aboveRight.add(xMax);
 		belowRight.add(xMax);
 		
 		//at this point were done with the setup
-		//we will push our initial 4 points to the hull counter clockwise
+		//we will push our initial 4 points to the hull counter clockwise conection hull segments between them
 		hull.add(Q1vert);	//top point
 		hullQ1(Q1vert);
-		if(!Q1vert.equals(xMin)){
+		if(!Q1vert.equals(xMin)){	//we don't want duplicates in the case that a hull has only 3 sides
+									//(only happened with small data sets but it's an edge case)
 			hull.add(xMin);		//left point
 		}
 		

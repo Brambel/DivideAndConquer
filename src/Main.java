@@ -11,7 +11,7 @@ public class Main {
 		ConvexHull hull = new ConvexHull();
 		Random r = new Random();
 		
-		int n = 10000;
+		int n = 100000;
 		for(int i=0;i<n;++i){
 			hull.addPoint(r.nextInt(n), r.nextInt(n));
 		}
