@@ -3,13 +3,11 @@ import java.awt.geom.Point2D;
 public class Tromino {
 	
 	private class subBoard{
-		int ID;
 		int[][] ary;
 		boolean empty;
 		boolean full;
 		
 		subBoard(){
-			ID=++IDmaker;
 			ary=new int[2][2]; //java guarantees initialization to 0, take that c++
 			empty=true;
 			full=false;
@@ -34,7 +32,7 @@ public class Tromino {
 			for(int i=0;i<2;++i){
 				for(int j=0;j<2;++j){
 					if(ary[i][j]==0){
-						ary[i][j]=n;
+						ary[i][j]=id;
 					}
 				}
 			}
@@ -71,14 +69,14 @@ public class Tromino {
 	Tromino(int n_, Point2D given){
 		givenX=(int) given.getX();
 		givenY=(int) given.getY();
-		n=n_+4; //we will make board a little bigger and boarder it will full squares, we will need an offest of for all board refrences
+		n=n_+4; //we will make board a little bigger and boarder it will full squares, we will need an offset of for all board references
 		board = new subBoard[n/2][n/2];
 		for(int i=0;i<n/2;++i){
 			for(int j=0;j<n/2;++j){
 				board[i][j] = new subBoard();
 			}
 		}
-		board[(givenX/2)][(givenY/2)].setGiven(givenX%2,givenY%2);
+		board[(givenX/2)+1][(givenY/2)+1].setGiven(givenX%2,givenY%2);
 		bounds=(n-4)/2; //make bounds of loops conform to our real board, no borders
 		
 		for(int i=0;i<(n/2);i++){//using real dimensions to set all our edges
@@ -115,20 +113,56 @@ public class Tromino {
 		for(int i=0;i<bounds;++i){
 			for(int j=0;j<bounds;++j){
 				if(board[i+1][j+1].isFull()){//find a full sub board
-					
+					//check upLeft, upRight, downRight, downLeft corners for 3 free squares
+					if(board[i][j].isEmpty()&&board[i+1][j].isEmpty()&&board[i][j+1].isEmpty()){//upLeft
+						int tempID=++IDmaker;
+						board[i][j].placePartial(1,1,tempID);//middle		
+						board[i+1][j].placePartial(0, 1, tempID);//right	
+						board[i][j+1].placePartial(1, 0, tempID);//down
+						return;
+						
+					}
+					else if(board[i+2][j].isEmpty()&&board[i+1][j].isEmpty()&&board[i+2][j+1].isEmpty()){//upRight
+						int tempID=++IDmaker;
+						board[i+2][j].placePartial(0,1,tempID);//middle		
+						board[i+1][j].placePartial(1, 1, tempID);//left	
+						board[i+2][j+1].placePartial(0, 0, tempID);//down
+						return;
+					}
+					else if(board[i+2][j+2].isEmpty()&&board[i+2][j+1].isEmpty()&&board[i+1][j+2].isEmpty()){//downRight
+						int tempID=++IDmaker;
+						board[i+2][j+2].placePartial(0,0,tempID);//middle		
+						board[i+1][j+2].placePartial(1, 0, tempID);//left	
+						board[i+2][j+1].placePartial(0, 1, tempID);//up
+						return;
+					}
+					else if(board[i+2][j+2].isEmpty()&&board[i][j+1].isEmpty()&&board[i+1][j+2].isEmpty()){//downLeft
+						int tempID=++IDmaker;
+						board[i][j+2].placePartial(1,0,tempID);//middle		
+						board[i+1][j+2].placePartial(0,0, tempID);//right	
+						board[i][j+1].placePartial(1, 1, tempID);//up
+						return;
+					}
 				}
 			}
+		}
+	}
+	
+	public void runPuzzle(){
+		while(!allComplete()){
+			fillPartials();
+			placeNewTrom();
 		}
 	}
 	
 	public void print(){
 		for(int i=0;i<bounds;++i){
 			for(int j=0;j<bounds;++j){
-				System.out.print(board[i][j].getTop()+" ");
+				System.out.print(board[i+1][j+1].getTop()+" ");
 			}
 			System.out.println();
 			for(int j=0;j<bounds;++j){
-				System.out.print(board[i][j].getBot()+" ");
+				System.out.print(board[i+1][j+1].getBot()+" ");
 			}
 			System.out.println();
 		}

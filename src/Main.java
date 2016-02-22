@@ -23,7 +23,9 @@ public class Main {
 		}
 		hull.print();
 		
-		Tromino trom = new Tromino(2, new Point2D.Float(0,1));
+		Tromino trom = new Tromino(4, new Point2D.Float(0,1));
+		trom.print();
+		trom.runPuzzle();
 		trom.print();
 		
 		
