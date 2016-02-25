@@ -25,7 +25,7 @@ public class Tromino {
 			return full;
 		}
 		public boolean isPartial(){
-			return !(empty&&full);
+			return !(empty^full);
 		}
 		
 		public void placeTrom(int id){
@@ -48,12 +48,8 @@ public class Tromino {
 			ary[x][y]=id;
 			empty=false;
 		}
-		
-		public String  getTop(){
-			return ary[0][0]+" "+ary[0][1];
-		}
-		public String  getBot(){
-			return ary[1][0]+" "+ary[1][1];
+		public int getSqr(int x, int y){
+			return (int)ary[x][y];
 		}
 		
 	}
@@ -158,11 +154,11 @@ public class Tromino {
 	public void print(){
 		for(int i=0;i<bounds;++i){
 			for(int j=0;j<bounds;++j){
-				System.out.print(board[i+1][j+1].getTop()+" ");
+				System.out.printf("%-3s %-4s", String.valueOf(board[i+1][j+1].getSqr(0,0)), String.valueOf(board[i+1][j+1].getSqr(0,1)));
 			}
 			System.out.println();
 			for(int j=0;j<bounds;++j){
-				System.out.print(board[i+1][j+1].getBot()+" ");
+				System.out.printf("%-3s %-4s",String.valueOf(board[i+1][j+1].getSqr(1,0)), String.valueOf(board[i+1][j+1].getSqr(1,1)));
 			}
 			System.out.println();
 		}

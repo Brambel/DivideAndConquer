@@ -289,11 +289,20 @@ public class ConvexHull {
 		
 	}
 	
-	public void print(){
+	public void printHull(){
 		int i=0;
 		System.out.println("The points on the hull are:");
 		for(Point2D p : hull){
 			System.out.println(++i+")\t("+(int)p.getX()+","+(int)p.getY()+")"); 
+		}
+	}
+	public void printPoints(){
+		System.out.println("The points in the population are:");
+		for(int i=0;i<population.size();i+=5){
+			for(int j=0;j<5;++j){
+				System.out.printf("%-15s",((j+i)+")->("+(int)population.get(i+j).getX()+","+(int)population.get(i+j).getY()+")"));
+			}
+			System.out.println("");
 		}
 	}
 }
